@@ -1,103 +1,109 @@
-def mostrar_tablero (tablero, cant_damas):
+def show_chessboard (tablero, queens_number):
 
-    for i in range(0, cant_damas):
+    for i in range(0, queens_number):
 
-        for j in range(0, cant_damas):
+        for j in range(0, queens_number):
 
             print(f"[{tablero[i][j]}]", end="")
 
         print("\n")
 
-def comprobacion (tablero_plantilla, cant_damas):
+def queen_threat(x, y):
+
+    if chessboard_transfer[x][y] != "D":
+
+        chessboard_transfer[x][y] = 1
+
+def verification (chessboard_template, queens_number):
 
 
     
 
-    for posicion_nueva_dama_x in range(0, cant_damas*cant_damas):
+    for posicion_nueva_dama_y in range(0, queens_number):
+        for posicion_nueva_dama_x in range(0, queens_number):
 
-        #renueva el tablero para que inicie una nueva comprobacion desde 0 con el indice adelantado
-        tablero_copia = tablero_plantilla.copy()
-        #Ayuda a reconocer cuantas damas hay en el tablero
-        damas_en_tablero = 0
-        #Indica la cantidad de soluciones encontradas
-        soluciones = 0
+            #renueva el tablero para que inicie una nueva verification desde 0 con el indice adelantado
+            chessboard_transfer = chessboard_template.copy()
+            #Ayuda a reconocer cuantas damas hay en el tablero
+            queens_counter = 0
+            #Indicates the number of solutions found
+            solutions = 0
 
-        for i in range(posicion_nueva_dama_x, cant_damas):
+            for i in range(posicion_nueva_dama_y, queens_number):
+                for j in range(posicion_nueva_dama_x, queens_number):
 
-            for j in range(posicion_nueva_dama_x, cant_damas):
+                    # i representada por el valor Y del eje de coordenadas
+                    # j representada por el valor X del eje de coordenadas
 
-                # i representada por el valor Y del eje de coordenadas
-                # j representada por el valor X del eje de coordenadas
+                    if chessboard_transfer[i][j] == 0:
 
-                if tablero_copia[i][j] == 0:
+                        
 
-                    
-
-                    tablero_copia[i][j] = "D"
-                    damas_en_tablero += 1
-                    
-                    #3
-                    for movimiento_X in range(j,cant_damas):
-
-                        tablero_copia[i][movimiento_X] = 1
-
-                    #4.5
-                    for movimiento_X in range(j, cant_damas):
-                        for movimiento_Y in range(i, cant_damas):
-
-                            tablero_copia[movimiento_Y][movimiento_X] = 1
-                    
-                    #6
-                    for movimiento_Y in range(i, cant_damas):
-
-                        tablero_copia[movimiento_Y][j] = 1
-                    
-                    #7.5 (good)
-                    for movimiento_X in range(j-1, 0, -1):
-                        for movimiento_Y in range(i+1, cant_damas):
+                        chessboard_transfer[i][j] = "D"
+                        queens_counter += 1
+                        
+                        #3
+                        for move_x in range(j,queens_number):
                             
-                            tablero_copia[movimiento_Y][movimiento_X] = 1
-                    
-                    #9
-                    for movimiento_X in range(j-1, 0, -1):
+                            queen_threat(i, move_x)
 
-                        tablero_copia[i][movimiento_X] = 1
-                    
-                    #10.5
-                    for movimiento_X in range(j-1, 0, -1):
-                        for movimiento_Y in range(i-1, 0, -1):
+                        #4.5
+                        for move_x in range(j, queens_number):
+                            for move_y in range(i, queens_number):
 
-                            tablero_copia[movimiento_Y][movimiento_X] = 1
-                    
-                    #12
-                    for movimiento_Y in range(i-1, 0, -1):
+                                queen_threat(move_y, move_x)
+                        
+                        #6
+                        for move_y in range(i, queens_number):
 
-                        tablero_copia[movimiento_Y][j] = 1
+                            queen_threat(move_y, j)
+                        
+                        #7.5 (good)
+                        for move_x in range(j-1, 0, -1):
+                            for move_y in range(i+1, queens_number):
+                                
+                                queen_threat(move_y, move_x)
+                        
+                        #9
+                        for move_x in range(j-1, 0, -1):
 
-                    #1.5
-                    for movimiento_X in range(j, cant_damas):
-                        for movimiento_Y in range(i-1, 0, -1):
+                            queen_threat(i, move_x)
+                        
+                        #10.5
+                        for move_x in range(j-1, 0, -1):
+                            for move_y in range(i-1, 0, -1):
 
-                            tablero_copia[movimiento_Y][movimiento_X] = 1
+                                queen_threat(move_y, move_x)
+                        
+                        #12
+                        for move_y in range(i-1, 0, -1):
+
+                            queen_threat(move_y, j)
+
+                        #1.5
+                        for move_x in range(j, queens_number):
+                            for move_y in range(i-1, 0, -1):
+
+                                queen_threat(move_y, move_x)
 
 
-        if cant_damas == damas_en_tablero:
+            if queens_number == queens_counter:
+                
+                chessboard_solution = chessboard_transfer.copy()
+                solutions += 1
             
-            tablero_solucion = tablero_copia.copy()
-            soluciones += 1
-            
-    if soluciones > 0:
+    if solutions > 0:
 
-        mostrar_tablero(tablero_solucion, cant_damas)
-        print(f"La cantidad de soluciones posibles es: {soluciones}")
+        show_chessboard(chessboard_solution, queens_number)
+        print(f"The number of possible solutions is : {solutions}")
 
     else:
-        print(f"No se encontraron soluciones para posicionar {cant_damas} damas en un tablero de {cant_damas}x{cant_damas}")
+        print(f"No solutions were found to position {queens_number} queens on a {queens_number}x{queens_number} board")
 
-cant_damas = int(input("Ingrese la cantidad de damas: "))
+queens_number = int(input("Enter the number of queens: "))
 
-#Creacion de tablero inicializado en 0 utilizando la técnica list_comprehension
-tablero_plantilla = [[0 for i in range(cant_damas)]for j in range(cant_damas)]
-
-#prueba para visualización de datos
-comprobacion(tablero_plantilla,cant_damas)
+#Board creation initialized to 0 using the list_comprehension technique
+chessboard_template = [[0 for i in range(queens_number)]for j in range(queens_number)]
+chessboard_transfer = chessboard_template.copy()
+#test for data visualization
+verification(chessboard_template,queens_number)
